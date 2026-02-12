@@ -4,4 +4,5 @@ class Endpoints{
 
   static const String getShowList = '/shows';
   static const String searchShows = '/search/shows';
+
 }

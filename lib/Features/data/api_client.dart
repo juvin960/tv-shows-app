@@ -9,6 +9,7 @@ class ApiClient {
 
   Future<dynamic> get(String path, {Map<String, String>? queryParameters,
       }) async {
+
     // combine base URL with endpoint and add optional query parameters (page=1)
     final uri = Uri.parse(baseUrl + path).replace(queryParameters: queryParameters);
 
