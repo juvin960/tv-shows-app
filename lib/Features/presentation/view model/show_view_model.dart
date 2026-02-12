@@ -1,14 +1,11 @@
-
-
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:tv_shows_appp/Features/data/model/show_model.dart';
-
-import '../../data/repository.dart';
+import '../../data/repositories/show_repository.dart';
 
 class ShowViewModel extends ChangeNotifier{
   final ShowRepository repository;
+
 
   ShowViewModel({required this.repository});
 
@@ -31,6 +28,8 @@ class ShowViewModel extends ChangeNotifier{
 
   Future<void> loadShows() async {
     try {
+      debugPrint('Page loading started');
+
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();
@@ -39,13 +38,61 @@ class ShowViewModel extends ChangeNotifier{
       _hasMore = true;
 
       _shows = await repository.getShows(_currentPage);
+
+      debugPrint(" Shows loaded: ${_shows.length}");
       _currentPage++;
-    } catch (e) {
-      _errorMessage = "Failed to load shows";
+    }  finally{
+      _isLoading = false;
+      notifyListeners();
+
     }
 
-    _isLoading = false;
+  }
+
+  Future<void> loadMore() async {
+    if (!_hasMore || _isFetchingMore) return;
+
+    debugPrint('Loaded more');
+    _isFetchingMore = true;
     notifyListeners();
+
+    try {
+      final data = await repository.getShows(_currentPage);
+
+      if (data.isEmpty) {
+        _hasMore = false;
+      } else {
+        _shows.addAll(data);
+        _currentPage++;
+      }
+    } catch (_) {}
+    finally{
+      _isFetchingMore = false;
+      notifyListeners();
+    }
+
+
+  }
+
+
+  void search(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+
+      try {
+        _isLoading = true;
+        notifyListeners();
+
+        _shows = await repository.searchShows(query);
+        _hasMore = false;
+      } catch (_) {
+        _errorMessage = "Search failed";
+      }
+
+      _isLoading = false;
+      notifyListeners();
+    });
   }
 
 }

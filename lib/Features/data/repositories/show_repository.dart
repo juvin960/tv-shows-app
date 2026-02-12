@@ -1,6 +1,8 @@
-import 'api_client.dart';
-import 'endponts.dart';
-import 'model/show_model.dart';
+import 'package:flutter/material.dart';
+
+import '../api_client.dart';
+import '../endpoints.dart';
+import '../model/show_model.dart';
 
 class ShowRepository {
   final ApiClient apiClient;
@@ -9,9 +11,17 @@ class ShowRepository {
 
   //shows for a specific page
   Future<List<ShowModel>> getShows(int page) async {
+
+    // debugPrint('page loaded');
+
     final data = await apiClient.get(Endpoints.getShowList,
       queryParameters: {"page": page.toString()},
     );
+
+    debugPrint("API data $data");
+
+    debugPrint("API data length: ${(data).length}");
+
 
     return (data as List)
         .map((json) => ShowModel.fromJson(json))
@@ -23,6 +33,7 @@ class ShowRepository {
     final data = await apiClient.get(Endpoints.searchShows,
       queryParameters: {"q": query},
     );
+
 
     return (data as List)
         .map((json) => ShowModel.fromJson(json['show']))
