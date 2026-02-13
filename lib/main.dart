@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import 'package:tv_shows_appp/Features/data/api_client.dart';
+import 'package:tv_shows_appp/Features/data/local_database/databas_helper.dart';
+import 'package:tv_shows_appp/Features/data/repositories/show_repository.dart';
 import 'Features/locator.dart';
-import 'Features/presentation/view model/show_view_model.dart';
+import 'Features/presentation/view_model/show_view_model.dart';
 import 'Features/presentation/view/splash_screen.dart';
 
 ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
@@ -11,6 +15,9 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   //   GetIt dependencies setup
   setupLocator();
+
+  // setup database
+  _setupDatabase();
 
   runApp(const MyApp());
 }
@@ -66,4 +73,9 @@ class MyApp extends StatelessWidget {
     );
   }
 
+}
+
+_setupDatabase() async {
+  // call method to create database and tables if they have not been created
+  await DatabaseHelper.createDatabaseAndTables();
 }

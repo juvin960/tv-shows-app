@@ -1,17 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:tv_shows_appp/Features/data/model/show_model.dart';
 
 import '../../data/model/cast_model.dart';
 import '../../data/repositories/show_repository.dart';
 
-class ShowViewModel extends ChangeNotifier{
+class ShowViewModel extends ChangeNotifier {
   final ShowRepository repository;
 
-
-  ShowViewModel( {required this.repository,
-  });
-
+  ShowViewModel({required this.repository});
 
   List<ShowModel> _shows = [];
   List<CastModel> _cast = [];
@@ -22,7 +20,6 @@ class ShowViewModel extends ChangeNotifier{
 
   int _currentPage = 0;
   Timer? _debounce;
-
 
   List<ShowModel> get shows => _shows;
   List<CastModel> get cast => _cast;
@@ -46,12 +43,10 @@ class ShowViewModel extends ChangeNotifier{
 
       debugPrint(" Shows loaded: ${_shows.length}");
       _currentPage++;
-    }  finally{
+    } finally {
       _isLoading = false;
       notifyListeners();
-
     }
-
   }
 
   Future<void> loadMore() async {
@@ -70,15 +65,12 @@ class ShowViewModel extends ChangeNotifier{
         _shows.addAll(data);
         _currentPage++;
       }
-    } catch (_) {}
-    finally{
+    } catch (_) {
+    } finally {
       _isFetchingMore = false;
       notifyListeners();
     }
-
-
   }
-
 
   void search(String query) {
     // Cancels previous timer
@@ -115,6 +107,7 @@ class ShowViewModel extends ChangeNotifier{
       }
     });
   }
+
   Future<void> loadCast(int showId) async {
     try {
       _isLoading = true;
@@ -122,16 +115,11 @@ class ShowViewModel extends ChangeNotifier{
       notifyListeners();
 
       _cast = await repository.getCast(showId);
-
     } catch (e) {
       _cast = [];
-    }
-    finally{
+    } finally {
       _isLoading = false;
       notifyListeners();
     }
-
   }
-
-
 }

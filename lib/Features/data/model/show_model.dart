@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class ShowModel {
   final int id;
   final String name;
@@ -63,4 +65,38 @@ class ShowModel {
       genreNames: genres,
     );
   }
+
+  // Convert a Show into a Map. The keys must correspond to the names of the
+  // columns in the database.
+  Map<String, dynamic> toMap() {
+    return {
+      "show_id": id,
+      "name": name,
+      "image": image,
+      "summary": summary,
+      "genreList": jsonEncode(genreList),
+      "status": status,
+      "premiereDate": premiereDate,
+      "time": time,
+      "network": network,
+      "ratings": ratings,
+      "daysList": jsonEncode(daysList),
+      "genreNames": genreNames,
+    };
+  }
+
+  Map toJson() => {
+    "show_id": id,
+    "name": name,
+    "image": image,
+    "summary": summary,
+    "genreList": genreList,
+    "status": status,
+    "premiereDate": premiereDate,
+    "time": time,
+    "network": network,
+    "ratings": ratings,
+    "daysList": daysList,
+    "genreNames": genreNames,
+  };
 }

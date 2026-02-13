@@ -1,7 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:tv_shows_appp/Features/data/repositories/show_repository.dart';
-import 'package:tv_shows_appp/Features/presentation/view%20model/show_view_model.dart';
+import 'package:tv_shows_appp/Features/presentation/view_model/show_view_model.dart';
 
 import 'data/api_client.dart';
 import 'data/endpoints.dart';

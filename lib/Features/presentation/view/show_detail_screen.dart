@@ -3,7 +3,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
 import '../../../main.dart';
 import '../../data/model/show_model.dart';
-import '../view model/show_view_model.dart';
+import '../view_model/show_view_model.dart';
 
 class ShowDetailsPage extends StatefulWidget {
   final ShowModel show;

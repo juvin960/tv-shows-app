@@ -1,7 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tv_shows_appp/Features/presentation/view/show_detail_screen.dart';
-import '../view model/show_view_model.dart';
+import '../view_model/show_view_model.dart';
 
 ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
 
@@ -35,7 +36,7 @@ class _HomePageState extends State<HomePage> {
     final vm = context.read<ShowViewModel>();
 
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent -200) {
+        _scrollController.position.maxScrollExtent - 200) {
       vm.loadMore();
     }
   }
@@ -50,7 +51,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
       builder: (_, __, ___) {
@@ -69,10 +69,10 @@ class _HomePageState extends State<HomePage> {
                   IconButton(
                     icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
                     onPressed: () {
-                      themeNotifier.value = isDark ? ThemeMode.light : ThemeMode.dark;
+                      themeNotifier.value =
+                          isDark ? ThemeMode.light : ThemeMode.dark;
                     },
-                  )
-
+                  ),
                 ],
                 bottom: PreferredSize(
                   preferredSize: const Size.fromHeight(60),
@@ -80,14 +80,18 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.all(12),
                     child: TextField(
                       controller: _searchController,
-                      style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                      style: TextStyle(
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
                       decoration: InputDecoration(
                         hintText: "Search shows...",
                         hintStyle: TextStyle(
                           color: isDark ? Colors.white54 : Colors.black54,
                         ),
-                        prefixIcon: Icon(Icons.search,
-                            color: isDark ? Colors.white : Colors.black),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
                         filled: true,
                         fillColor: isDark ? Colors.grey[900] : Colors.grey[300],
                         border: OutlineInputBorder(
@@ -119,14 +123,18 @@ class _HomePageState extends State<HomePage> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(Icons.error_outline,
-                                    color: Colors.red, size: 60),
+                                const Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                  size: 60,
+                                ),
                                 const SizedBox(height: 16),
                                 Text(
                                   vm.errorMessage!,
                                   style: TextStyle(
-                                      color: isDark ? Colors.white : Colors.black,
-                                      fontSize: 16),
+                                    color: isDark ? Colors.white : Colors.black,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ],
                             ),
@@ -137,9 +145,7 @@ class _HomePageState extends State<HomePage> {
                   }
 
                   if (vm.isLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   if (vm.shows.isEmpty) {
@@ -157,12 +163,13 @@ class _HomePageState extends State<HomePage> {
                   return GridView.builder(
                     controller: _scrollController,
                     padding: const EdgeInsets.all(12),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 0.65,
-                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 0.65,
+                        ),
                     itemCount: vm.shows.length,
                     itemBuilder: (context, index) {
                       final show = vm.shows[index];
@@ -189,22 +196,42 @@ class _HomePageState extends State<HomePage> {
                             Expanded(
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
-                                child: show.image != null
-                                    ? Image.network(
-                                  show.image!,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                )
-                                    : Container(
-                                  color: isDark ? Colors.grey[800] : Colors.grey[300],
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.tv,
-                                      color: Colors.white,
-                                      size: 40,
-                                    ),
-                                  ),
-                                ),
+                                child:
+                                    show.image != null
+                                        ? CachedNetworkImage(
+                                          imageUrl: show.image ?? "",
+                                          imageBuilder:
+                                              (
+                                                context,
+                                                imageProvider,
+                                              ) => Container(
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.cover,
+                                                    // colorFilter:
+                                                    // ColorFilter.mode(Colors.red, BlendMode.colorBurn)
+                                                  ),
+                                                ),
+                                              ),
+                                          // placeholder: (context, url) => CircularProgressIndicator(),
+                                          errorWidget:
+                                              (context, url, error) =>
+                                                  Icon(Icons.error),
+                                        )
+                                        : Container(
+                                          color:
+                                              isDark
+                                                  ? Colors.grey[800]
+                                                  : Colors.grey[300],
+                                          child: const Center(
+                                            child: Icon(
+                                              Icons.tv,
+                                              color: Colors.white,
+                                              size: 40,
+                                            ),
+                                          ),
+                                        ),
                               ),
                             ),
                             const SizedBox(height: 6),
@@ -228,8 +255,11 @@ class _HomePageState extends State<HomePage> {
                             ),
                             Row(
                               children: [
-                                Icon(Icons.star,
-                                    color: Colors.yellow, size: 20),
+                                Icon(
+                                  Icons.star,
+                                  color: Colors.yellow,
+                                  size: 20,
+                                ),
                                 const SizedBox(width: 5),
                                 Text(
                                   show.ratings,
@@ -238,7 +268,7 @@ class _HomePageState extends State<HomePage> {
                                     color: isDark ? Colors.white : Colors.black,
                                     fontWeight: FontWeight.bold,
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ],
@@ -254,10 +284,7 @@ class _HomePageState extends State<HomePage> {
                 unselectedItemColor: isDark ? Colors.white54 : Colors.black54,
                 currentIndex: _selectedIndex,
                 items: const [
-                  BottomNavigationBarItem(
-                    icon: Icon(Icons.tv),
-                    label: "Shows",
-                  ),
+                  BottomNavigationBarItem(icon: Icon(Icons.tv), label: "Shows"),
                   BottomNavigationBarItem(
                     icon: Icon(Icons.favorite),
                     label: "Favorites",
