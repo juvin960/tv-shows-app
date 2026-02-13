@@ -147,18 +147,30 @@ class _HomePageState extends State<HomePage> {
                   if (vm.isLoading) {
                     return const Center(child: CircularProgressIndicator());
                   }
-
                   if (vm.shows.isEmpty) {
                     return Center(
-                      child: Text(
-                        "No results found",
-                        style: TextStyle(
-                          color: isDark ? Colors.white : Colors.black,
-                          fontSize: 18,
-                        ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "No results found",
+                            style: TextStyle(
+                              color: isDark ? Colors.white : Colors.black,
+                              fontSize: 18,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              vm.loadShows();
+                            },
+                            child: const Text("Refresh"),
+                          ),
+                        ],
                       ),
                     );
                   }
+
 
                   return GridView.builder(
                     controller: _scrollController,

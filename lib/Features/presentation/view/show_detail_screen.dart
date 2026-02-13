@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
@@ -65,9 +66,26 @@ class _ShowDetailsPageState extends State<ShowDetailsPage> {
                     fit: StackFit.expand,
                     children: [
                       if (widget.show.image != null)
-                        Image.network(widget.show.image!, fit: BoxFit.cover)
+                        CachedNetworkImage(
+                          imageUrl: widget.show.image!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          placeholder: (context, url) => Container(
+                            color: isDark ? Colors.grey[800] : Colors.grey[300],
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            color: isDark ? Colors.grey[800] : Colors.grey[300],
+                            child: const Icon(Icons.broken_image),
+                          ),
+                        )
                       else
-                        Container(color: isDark ? Colors.grey[800] : Colors.grey[300]),
+                        Container(
+                          color: isDark ? Colors.grey[800] : Colors.grey[300],
+                        ),
+
                       Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
