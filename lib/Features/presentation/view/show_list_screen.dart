@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tv_shows_appp/Features/presentation/view/show_detail_screen.dart';
 
 import '../view model/show_view_model.dart';
 
@@ -140,6 +141,13 @@ class _HomePageState extends State<HomePage> {
 
                   return GestureDetector(
                     onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ShowDetailsPage(show: show),
+                        ),
+                      );
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text("${show.name} selected"),
