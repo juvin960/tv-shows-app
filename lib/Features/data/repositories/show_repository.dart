@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../api_client.dart';
 import '../endpoints.dart';
+import '../model/cast_model.dart';
 import '../model/show_model.dart';
 
 class ShowRepository {
   final ApiClient apiClient;
 
   ShowRepository(this.apiClient);
-
-  //shows for a specific page
   Future<List<ShowModel>> getShows(int page) async {
 
     // debugPrint('page loaded');
@@ -39,4 +38,16 @@ class ShowRepository {
         .map((json) => ShowModel.fromJson(json['show']))
         .toList();
   }
+
+  Future<List<CastModel>> getCast(int page) async {
+    final data = await apiClient.get(Endpoints.showCast);
+    debugPrint("API data $data");
+    debugPrint("API data length: ${(data).length}");
+
+
+    return (data as List)
+        .map((json) => CastModel.fromJson(json))
+        .toList();
+  }
+
 }

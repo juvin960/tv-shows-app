@@ -1,12 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:provider/provider.dart';
 import '../../../main.dart';
 import '../../data/model/show_model.dart';
+import '../view model/show_view_model.dart';
 
-class ShowDetailsPage extends StatelessWidget {
+class ShowDetailsPage extends StatefulWidget {
   final ShowModel show;
 
   const ShowDetailsPage({super.key, required this.show});
+
+  @override
+  State<ShowDetailsPage> createState() => _ShowDetailsPageState();
+}
+
+class _ShowDetailsPageState extends State<ShowDetailsPage> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final vm = Provider.of<ShowViewModel>(context, listen: false);
+      vm.loadCast(widget.show.id);
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +53,7 @@ class ShowDetailsPage extends StatelessWidget {
                 ),
                 flexibleSpace: FlexibleSpaceBar(
                   title: Text(
-                    show.name,
+                    widget.show.name,
                     style: TextStyle(
                       color: textColor,
                       shadows: const [
@@ -44,8 +64,8 @@ class ShowDetailsPage extends StatelessWidget {
                   background: Stack(
                     fit: StackFit.expand,
                     children: [
-                      if (show.image != null)
-                        Image.network(show.image!, fit: BoxFit.cover)
+                      if (widget.show.image != null)
+                        Image.network(widget.show.image!, fit: BoxFit.cover)
                       else
                         Container(color: isDark ? Colors.grey[800] : Colors.grey[300]),
                       Container(
@@ -55,8 +75,8 @@ class ShowDetailsPage extends StatelessWidget {
                             end: Alignment.bottomCenter,
                             colors: [
                               isDark
-                                  ? Colors.black.withOpacity(0.6)
-                                  : Colors.white.withOpacity(0.6),
+                                  ? Colors.black.withValues(alpha: 0.6)
+                                  : Colors.white.withValues(alpha: 0.6),
                               Colors.transparent,
                             ],
                           ),
@@ -78,7 +98,7 @@ class ShowDetailsPage extends StatelessWidget {
                     children: [
                       // Rating
                       Text(
-                        "⭐ Rating: ${show.ratings.isNotEmpty ? show.ratings : ""}",
+                        "⭐ Rating: ${widget.show.ratings.isNotEmpty ? widget.show.ratings : ""}",
                         style: TextStyle(fontSize: 16, color: textColor),
                       ),
                       const SizedBox(height: 12),
@@ -86,7 +106,7 @@ class ShowDetailsPage extends StatelessWidget {
                       // Genres
                       Wrap(
                         spacing: 8,
-                        children: show.genreList
+                        children: widget.show.genreList
                             .map((genre) => Chip(
                           label: Text(
                             genre.toString(),
@@ -103,7 +123,7 @@ class ShowDetailsPage extends StatelessWidget {
                         children: [
                           Icon(Icons.info_outline, size: 16, color: textColor),
                           const SizedBox(width: 4),
-                          Text(show.status, style: TextStyle(color: textColor)),
+                          Text(widget.show.status, style: TextStyle(color: textColor)),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -113,7 +133,7 @@ class ShowDetailsPage extends StatelessWidget {
                         children: [
                           Icon(Icons.calendar_today, size: 16, color: textColor),
                           const SizedBox(width: 4),
-                          Text(show.premiereDate, style: TextStyle(color: textColor)),
+                          Text(widget.show.premiereDate, style: TextStyle(color: textColor)),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -123,7 +143,7 @@ class ShowDetailsPage extends StatelessWidget {
                         children: [
                           Icon(Icons.schedule, size: 16, color: textColor),
                           const SizedBox(width: 4),
-                          Text("${show.daysList.join(", ")} ${show.time}",
+                          Text("${widget.show.daysList.join(", ")} ${widget.show.time}",
                               style: TextStyle(color: textColor)),
                         ],
                       ),
@@ -134,7 +154,7 @@ class ShowDetailsPage extends StatelessWidget {
                         children: [
                           Icon(Icons.tv, size: 16, color: textColor),
                           const SizedBox(width: 4),
-                          Text(show.network.isNotEmpty ? show.network : "",
+                          Text(widget.show.network.isNotEmpty ? widget.show.network : "",
                               style: TextStyle(color: textColor)),
                         ],
                       ),
@@ -152,7 +172,7 @@ class ShowDetailsPage extends StatelessWidget {
                       const SizedBox(height: 10),
 
                       Html(
-                        data: show.summary,
+                        data: widget.show.summary,
                         style: {
                           "body": Style(
                             fontSize: FontSize(14),
@@ -162,6 +182,85 @@ class ShowDetailsPage extends StatelessWidget {
                           "p": Style(margin: Margins.only(bottom: 12)),
                         },
                       ),
+                      const SizedBox(height: 30),
+                      Consumer<ShowViewModel>(
+                        builder: (context, vm, _) {
+
+                          if (vm.isLoading) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+
+                          if (vm.cast.isEmpty) {
+                            return const Text("No cast information available");
+                          }
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 20),
+                              const Text(
+                                "Cast",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+
+                              SizedBox(
+                                height: 180,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: vm.cast.length,
+                                  itemBuilder: (context, index) {
+                                    final actor = vm.cast[index];
+
+                                    return Container(
+                                      width: 120,
+                                      margin: const EdgeInsets.only(right: 12),
+                                      child: Column(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(12),
+                                            child: actor.image != null
+                                                ? Image.network(
+                                              actor.image!,
+                                              height: 120,
+                                              width: 100,
+                                              fit: BoxFit.cover,
+                                            )
+                                                : Container(
+                                              height: 120,
+                                              width: 100,
+                                              color: Colors.grey,
+                                              child: const Icon(Icons.person),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            actor.name,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            actor.character,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+
                     ],
                   ),
                 ),

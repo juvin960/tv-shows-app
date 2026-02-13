@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
     final vm = context.read<ShowViewModel>();
 
     if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
+        _scrollController.position.maxScrollExtent -200) {
       vm.loadMore();
     }
   }
@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     _scrollController.dispose();
+
     _searchController.dispose();
     super.dispose();
   }

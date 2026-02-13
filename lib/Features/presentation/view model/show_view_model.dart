@@ -1,16 +1,20 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tv_shows_appp/Features/data/model/show_model.dart';
+
+import '../../data/model/cast_model.dart';
 import '../../data/repositories/show_repository.dart';
 
 class ShowViewModel extends ChangeNotifier{
   final ShowRepository repository;
 
 
-  ShowViewModel({required this.repository});
+  ShowViewModel( {required this.repository,
+  });
 
 
   List<ShowModel> _shows = [];
+  List<CastModel> _cast = [];
   bool _isLoading = false;
   bool _isFetchingMore = false;
   bool _hasMore = true;
@@ -21,6 +25,7 @@ class ShowViewModel extends ChangeNotifier{
 
 
   List<ShowModel> get shows => _shows;
+  List<CastModel> get cast => _cast;
   bool get isLoading => _isLoading;
   bool get isFetchingMore => _isFetchingMore;
   bool get hasMore => _hasMore;
@@ -109,6 +114,23 @@ class ShowViewModel extends ChangeNotifier{
         notifyListeners();
       }
     });
+  }
+  Future<void> loadCast(int showId) async {
+    try {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+
+      _cast = await repository.getCast(showId);
+
+    } catch (e) {
+      _cast = [];
+    }
+    finally{
+      _isLoading = false;
+      notifyListeners();
+    }
+
   }
 
 
