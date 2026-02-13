@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Features/locator.dart';
 import 'Features/presentation/view model/show_view_model.dart';
-import 'Features/presentation/view/show_list_screen.dart';
+import 'Features/presentation/view/splash_screen.dart';
 
 ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
 
@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
               ),
             ),
             themeMode: currentTheme, // switch based on ValueNotifier
-            home: const HomePage(),
+            home: const SplashScreen(),
           );
         },
       ),

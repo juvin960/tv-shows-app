@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:tv_shows_appp/Features/presentation/view/show_detail_screen.dart';
 import '../view model/show_view_model.dart';
 
-// Global ValueNotifier for theme
 ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
 
 class HomePage extends StatefulWidget {
