@@ -79,20 +79,21 @@ class ShowViewModel extends ChangeNotifier{
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(const Duration(milliseconds: 500), () async {
-
       try {
         _isLoading = true;
+        _errorMessage = null;
         notifyListeners();
 
         _shows = await repository.searchShows(query);
         _hasMore = false;
       } catch (_) {
         _errorMessage = "Search failed";
+      } finally {
+        _isLoading = false;
+        notifyListeners();
       }
-
-      _isLoading = false;
-      notifyListeners();
     });
   }
+
 
 }

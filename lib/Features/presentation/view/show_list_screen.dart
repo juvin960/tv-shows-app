@@ -73,16 +73,13 @@ class _HomePageState extends State<HomePage> {
                   ),
                   onChanged: (value) {
                     vm.search(value);
-
-                    //  Show snack bar on search
-                    if (value.isNotEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text("Searching for \"$value\""),
-                          duration: const Duration(milliseconds: 800),
+                          content: Text("Searching..."),
+                          duration: const Duration(milliseconds: 500),
                         ),
                       );
-                    }
+
                   },
                 ),
               ),
