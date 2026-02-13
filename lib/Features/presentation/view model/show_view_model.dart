@@ -76,16 +76,32 @@ class ShowViewModel extends ChangeNotifier{
 
 
   void search(String query) {
+    // Cancels previous timer
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(const Duration(milliseconds: 500), () async {
+      // Handles empty query early
+      if (query.trim().isEmpty) {
+        _shows = [];
+        _errorMessage = null;
+        _hasMore = false;
+        notifyListeners();
+        return;
+      }
+
       try {
         _isLoading = true;
         _errorMessage = null;
         notifyListeners();
 
+        // Fetches shows from repository
         _shows = await repository.searchShows(query);
         _hasMore = false;
+
+        // If no results set a message
+        if (_shows.isEmpty) {
+          _errorMessage = "No results found ";
+        }
       } catch (_) {
         _errorMessage = "Search failed";
       } finally {

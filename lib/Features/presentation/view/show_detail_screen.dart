@@ -13,8 +13,6 @@ class ShowDetailsPage extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-
-
           SliverAppBar(
             expandedHeight: 400,
             pinned: true,

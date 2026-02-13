@@ -4,11 +4,12 @@ import 'Features/locator.dart';
 import 'Features/presentation/view model/show_view_model.dart';
 import 'Features/presentation/view/show_list_screen.dart';
 
+ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
 
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  //  Setup all GetIt dependencies before runApp
+  //   GetIt dependencies setup
   setupLocator();
 
   runApp(const MyApp());
@@ -21,22 +22,48 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Provide ShowViewModel from GetIt
         ChangeNotifierProvider<ShowViewModel>(
           create: (_) => sl<ShowViewModel>(),
         ),
-
       ],
-      child: MaterialApp(
-        title: 'TV Shows App',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.red,
-          useMaterial3: true,
-          fontFamily: 'PlusJakartaSans',
-        ),
-        home: const HomePage(),
+      child: ValueListenableBuilder<ThemeMode>(
+        valueListenable: themeNotifier,
+        builder: (context, currentTheme, _) {
+          return MaterialApp(
+            title: 'TV Shows App',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              brightness: Brightness.light,
+              primarySwatch: Colors.red,
+              useMaterial3: true,
+              fontFamily: 'PlusJakartaSans',
+              scaffoldBackgroundColor: Colors.white,
+              appBarTheme: const AppBarTheme(backgroundColor: Colors.red),
+              bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+                backgroundColor: Colors.white,
+                selectedItemColor: Colors.red,
+                unselectedItemColor: Colors.black54,
+              ),
+            ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              primarySwatch: Colors.red,
+              useMaterial3: true,
+              fontFamily: 'PlusJakartaSans',
+              scaffoldBackgroundColor: Colors.black,
+              appBarTheme: const AppBarTheme(backgroundColor: Colors.black),
+              bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+                backgroundColor: Color(0xFF121212),
+                selectedItemColor: Colors.red,
+                unselectedItemColor: Colors.white54,
+              ),
+            ),
+            themeMode: currentTheme, // switch based on ValueNotifier
+            home: const HomePage(),
+          );
+        },
       ),
     );
   }
+
 }

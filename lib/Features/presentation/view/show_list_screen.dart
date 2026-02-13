@@ -12,6 +12,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
   late ScrollController _scrollController;
   final TextEditingController _searchController = TextEditingController();
 
@@ -107,10 +109,10 @@ class _HomePageState extends State<HomePage> {
                                   color: Colors.white, fontSize: 16),
                             ),
                             const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: vm.loadShows,
-                              child: const Text("Retry"),
-                            )
+                            // ElevatedButton(
+                            //   onPressed: vm.loadShows,
+                            //   child: const Text("Retry"),
+                            // )
                           ],
                         ),
                       ),
@@ -232,8 +234,57 @@ class _HomePageState extends State<HomePage> {
               );
             },
           ),
+          bottomNavigationBar: BottomNavigationBar(
+            backgroundColor: Colors.grey[900],
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white54,
+            currentIndex: _selectedIndex,
+            items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.tv),
+                label: "Shows",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.favorite),
+                label: "Favorites",
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                label: "Settings",
+              ),
+            ],
+            onTap: (index) {
+              setState(() {
+                _selectedIndex = index;
+              });
+
+              final vm = context.read<ShowViewModel>();
+
+              switch (index) {
+                case 0:
+
+                  _searchController.clear();
+                  vm.loadShows();
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                  break;
+                case 1:
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (_) => FavoritesPage()),
+                  // );
+                  break;
+                case 2:
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (_) => SettingsPage()),
+                  // );
+                  break;
+              }
+            },
+          ),
+
         );
       },
-    );
-  }
+        );
+      }
 }
