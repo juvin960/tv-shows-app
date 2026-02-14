@@ -2,9 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tv_shows_appp/Features/presentation/view/show_detail_screen.dart';
+import '../../../main.dart';
 import '../view_model/show_view_model.dart';
 
-ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -51,16 +51,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
-      builder: (_, __, ___) {
-        final isDark = themeNotifier.value == ThemeMode.dark;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
         return Consumer<ShowViewModel>(
           builder: (context, vm, _) {
             return Scaffold(
-              backgroundColor: isDark ? Colors.black : Colors.white,
               appBar: AppBar(
-                backgroundColor: isDark ? Colors.black : Colors.red,
                 title: Text(
                   "TV Shows",
                   style: TextStyle(color: isDark ? Colors.white : Colors.white),
@@ -329,7 +326,6 @@ class _HomePageState extends State<HomePage> {
             );
           },
         );
-      },
-    );
+
   }
 }

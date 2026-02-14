@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
-import '../../../main.dart';
 import '../../data/model/show_model.dart';
 import '../view_model/show_view_model.dart';
 
@@ -31,16 +30,15 @@ class _ShowDetailsPageState extends State<ShowDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
-      builder: (context, themeMode, _) {
-        final isDark = themeMode == ThemeMode.dark;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-        final textColor = isDark ? Colors.white : Colors.black;
-        final backgroundColor = isDark ? Colors.black : Colors.white;
-        final chipBackground = isDark ? Colors.grey[800] : Colors.grey[300];
+    final textColor = theme.colorScheme.onSurface;
+    final backgroundColor = theme.scaffoldBackgroundColor;
+    final chipBackground = theme.colorScheme.surfaceContainerHighest;
 
-        return Scaffold(
+
+    return Scaffold(
           backgroundColor: backgroundColor,
           body: CustomScrollView(
             slivers: [
@@ -130,7 +128,7 @@ class _ShowDetailsPageState extends State<ShowDetailsPage> {
                             genre.toString(),
                             style: TextStyle(color: textColor),
                           ),
-                          backgroundColor: chipBackground,
+
                         ))
                             .toList(),
                       ),
@@ -216,12 +214,15 @@ class _ShowDetailsPageState extends State<ShowDetailsPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 20),
-                              const Text(
+                              Text(
                                 "Cast",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor,
+                                  ),
+
+
                               ),
                               const SizedBox(height: 10),
 
@@ -286,7 +287,6 @@ class _ShowDetailsPageState extends State<ShowDetailsPage> {
             ],
           ),
         );
-      },
-    );
+
   }
 }
