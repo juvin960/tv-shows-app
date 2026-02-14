@@ -61,10 +61,21 @@ testability, and scalability
 flutter test
 ```
 
- *build APKs for specific environments:*
+ *build APKs for Android environments:*
 ```bash
-flutter build apk --flavor production --release
+flutter build apk
+
 ```
+*build obfuscated APK for Android environments:*
+```bash
+flutter build apk --obfuscate --split-debug-info=<specify the directory to save the symboles>
+
+```
+
+## time spent
+two days and 8hours (56hours)
+
+
 # License
 -  Distributed under the MIT License. See LICENSE for more information.
 
