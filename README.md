@@ -7,25 +7,6 @@
    and testing practices suitable for real-world mobile applications.**
 
 
-##    Overview
- **It showcases:
- **Clean separation of concerns
- **REST API integration
- **Provider-based state management
- **Unit and widget testing
- **Theme switching (Light/Dark mode)
-
-
-##    Features
-    **Search for TV shows
-    **View detailed show information
-    **Network image loading with fallback handling
-    **Light and Dark theme support
-    **Error handling and user-friendly messages
-    
-
-
-
 ##  Getting Started
 
 To get a local copy up and running, follow these simple steps.
@@ -50,14 +31,26 @@ To get a local copy up and running, follow these simple steps.
     flutter run
     ```
 
+
+##    Features
+    **Search for TV shows
+    **View detailed show information
+    **Network image loading with fallback handling
+    **Light and Dark theme support
+    **Error handling and user-friendly messages
+
+
+
 ##  Project Structure
 
 ``The TV Show App is built using the MVVM (Model-View-ViewModel) architecture pattern to ensure maintainability,
 testability, and scalability
 
-*   `lib/models`: Data models.
-*   `lib/view_models`: Logic and state management.
-*   `lib/views`: UI screens and widgets.
+*    `data`: Repository.
+*   `model`: Models data.
+*   `Presentation`: `view_models`: Logic and state management.
+*                    `views` : UI screens and widgets.
+*          
 
 ##  Running Tests
 - This project includes, ViewModel unit tests, Widget tests Mocked dependencies using Mockito
@@ -66,4 +59,22 @@ testability, and scalability
 
 ```bash
 flutter test
+```
+
+ *build APKs for specific environments:*
+```bash
+flutter build apk --flavor production --release
+```
+# License
+-  Distributed under the MIT License. See LICENSE for more information.
+
+
+Author
+Juvin Achieng,
+juvin.omondi@gmail.com
+https://github.com/juvin960/
+
+
+
+
 

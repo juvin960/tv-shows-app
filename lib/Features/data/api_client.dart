@@ -19,6 +19,7 @@ class ApiClient {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
+      // Throws an exception when the status code is not 200
       throw Exception("Error: ${response.statusCode}");
     }
   }

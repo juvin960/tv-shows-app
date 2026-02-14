@@ -4,9 +4,8 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:tv_shows_appp/Features/data/model/local_cast_model.dart';
-import 'package:tv_shows_appp/Features/data/model/local_show_model.dart';
-import 'package:tv_shows_appp/Features/data/model/show_model.dart';
+import 'package:tv_shows_appp/Features/model/cast_model.dart';
+import 'package:tv_shows_appp/Features/model/show_model.dart';
 
 abstract class DatabaseHelper {
   static createDatabaseAndTables() async {
@@ -14,9 +13,7 @@ abstract class DatabaseHelper {
     WidgetsFlutterBinding.ensureInitialized();
     // Open the database and store the reference.
     openDatabase(
-      // Set the path to the database. Note: Using the `join` function from the
-      // `path` package is best practice to ensure the path is correctly
-      // constructed for each platform.
+      // Set the path to the database
       join(await getDatabasesPath(), 'shows_database.db'),
 
       // When the database is first created, create a table to store data.
@@ -24,27 +21,29 @@ abstract class DatabaseHelper {
         // Run the CREATE TABLE statement on the database.
         db.execute(
           'CREATE TABLE shows('
-          'id INTEGER PRIMARY KEY AUTOINCREMENT,'
-          ' show_id INTEGER,'
-          ' name TEXT,'
-          ' image TEXT,'
-          ' summary TEXT,'
-          ' genreList TEXT,'
-          ' status TEXT,'
-          ' premiereDate TEXT,'
-          ' time TEXT,'
-          ' network TEXT,'
-          ' ratings TEXT,'
-          ' daysList TEXT,'
-          ' genreNames TEXT)',
+              'id INTEGER PRIMARY KEY AUTOINCREMENT,'
+              ' show_id INTEGER,'
+              ' name TEXT,'
+              ' image TEXT,'
+              ' summary TEXT,'
+              ' genreList TEXT,'
+              ' status TEXT,'
+              ' premiereDate TEXT,'
+              ' time TEXT,'
+              ' network TEXT,'
+              ' ratings TEXT,'
+              ' daysList TEXT,'
+              ' genreNames TEXT)',
         );
 
         return db.execute(
           'CREATE TABLE cast('
-          'id INTEGER PRIMARY KEY AUTOINCREMENT,'
-          ' cast_id INTEGER,'
-          ' show_id INTEGER,'
-          ' cast TEXT)',
+              'id INTEGER PRIMARY KEY AUTOINCREMENT,'
+              ' cast_id INTEGER,'
+              ' show_id INTEGER,'
+              ' name TEXT,'
+              ' image TEXT,'
+              ' character TEXT)',
         );
       },
 
@@ -56,9 +55,7 @@ abstract class DatabaseHelper {
 
   static Future<Database> createDatabaseConnection() async {
     return openDatabase(
-      // Set the path to the database. Note: Using the `join` function from the
-      // `path` package is best practice to ensure the path is correctly
-      // constructed for each platform.
+      // Set the path to the database.
       join(await getDatabasesPath(), 'shows_database.db'),
     );
   }
@@ -73,7 +70,6 @@ abstract class DatabaseHelper {
       // create a DB connection
       // Get a reference to the database.
       final db = await createDatabaseConnection();
-
 
       // check if a records exists to decide whether to update or insert
       final List<Map<String, dynamic>> maps = await db.query(
@@ -113,7 +109,7 @@ abstract class DatabaseHelper {
   /// inserts or update [cast] and [showId] from the cast table
   /// check for existing records/update by [castId]
   static Future<void> insertOrUpdateCast({
-    required Map<String, dynamic> cast,
+    required CastModel cast,
     required int castId,
     required int showId,
   }) async {
@@ -121,13 +117,6 @@ abstract class DatabaseHelper {
       // create a DB connection
       // Get a reference to the database.
       final db = await createDatabaseConnection();
-
-      LocalCastModel localShowModel = LocalCastModel(
-        id: 0,
-        cast: jsonEncode(cast),
-        castId: castId,
-        showId: showId,
-      );
 
       // check if a records exists to decide whether to update or insert
       final List<Map<String, dynamic>> maps = await db.query(
@@ -142,7 +131,7 @@ abstract class DatabaseHelper {
         // In this case, replace any previous data.
         await db.update(
           'cast',
-          localShowModel.toMap(),
+          cast.toMap(),
           // Ensure that the show has a matching id.
           where: 'cast_id = ?',
           // Pass the id as a whereArg to prevent SQL injection.
@@ -155,7 +144,7 @@ abstract class DatabaseHelper {
         // In this case, replace any previous data.
         await db.insert(
           'cast',
-          localShowModel.toMap(),
+          cast.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
       }
@@ -178,26 +167,54 @@ abstract class DatabaseHelper {
     final List<Map<String, Object?>> showsMaps = await db.rawQuery(
       'SELECT * FROM shows',
     );
-    debugPrint("Data from db is ${showsMaps.length}");
+    // debugPrint("Data from db is ${showsMaps.length}");
 
-    // Convert the list of each show's fields into a list of `Show` objects.
+    return _formatDataFromDB(showsMaps: showsMaps);
+  }
+
+  /// search for matching shows by show name
+  /// [searchTerm] query parameter
+  static Future<List<ShowModel>> searchLocalShows({
+    required String searchTerm,
+  }) async {
+    // create a DB connection
+    // Get a reference to the database.
+    final db = await createDatabaseConnection();
+
+    // Query the table for matching shows.
+    final List<Map<String, Object?>> showsMaps = await await db.query(
+      'shows',
+      // Define the WHERE clause using the LIKE operator for searching
+      where: "name LIKE ?",
+      // Pass the search term as an argument, ensuring '%' is part of the string here
+      whereArgs: ['%$searchTerm%'],
+    );
+
+    return _formatDataFromDB(showsMaps: showsMaps);
+  }
+
+  /// format shows data from the Database
+  /// [showsMaps] is a list of [ShowModel]
+  static Future<List<ShowModel>> _formatDataFromDB({
+    required List<Map<String, Object?>> showsMaps,
+  }) async {
+    // Convert the list of each show's fields into a list of `ShowModel` objects.
     return [
       for (final {
-            'show_id': id as int,
-            'name': name as String,
-            'image': image as String,
-            'summary': summary as String,
-            'genreList': genreList as String,
-            'status': status as String,
-            'premiereDate': premiereDate as String,
-            'time': time as String,
-            'network': network as String,
-            'ratings': ratings as String,
-            'daysList': daysList as String,
-            'genreNames': genreNames as String,
-          }
-          in showsMaps)
-        // LocalShowModel(id: showId, show: show, showId: showId),
+      'show_id': id as int,
+      'name': name as String,
+      'image': image as String,
+      'summary': summary as String,
+      'genreList': genreList as String,
+      'status': status as String,
+      'premiereDate': premiereDate as String,
+      'time': time as String,
+      'network': network as String,
+      'ratings': ratings as String,
+      'daysList': daysList as String,
+      'genreNames': genreNames as String,
+      }
+      in showsMaps)
         ShowModel(
           id: id,
           name: name,
@@ -215,31 +232,37 @@ abstract class DatabaseHelper {
     ];
   }
 
-  static Future<List<LocalShowModel>> searchLocalShows({
-    required String searchTerm,
-  }) async {
+  /// get cast from database matching id [showId]
+  static Future<List<CastModel>> getLocalCast({required int showId}) async {
     // create a DB connection
     // Get a reference to the database.
     final db = await createDatabaseConnection();
 
-    // Query the table for all the dogs.
-    // LIMIT: how many rows to fetch
-    // OFFSET: how many rows to skip
-    final List<Map<String, Object?>> showsMaps = await await db.query(
-      'shows',
-      // Define the WHERE clause using the LIKE operator for searching
-      where: "column_name LIKE ?",
-      // Pass the search term as an argument, ensuring '%' is part of the string here
-      whereArgs: ['%$searchTerm%'],
+    final List<Map<String, Object?>> castMaps = await await db.query(
+      'cast',
+      where: "show_id = ?",
+      whereArgs: [showId],
     );
 
-    debugPrint("Data from db is ${showsMaps.length}");
+    debugPrint("Cast data from db is ${castMaps.length}");
 
-    // Convert the list of each show's fields into a list of `Show` objects.
+    // Convert the list of each show's fields into a list of `CastModel` objects.
     return [
-      for (final {'show': show as String, 'show_id': showId as int}
-          in showsMaps)
-        LocalShowModel(id: showId, show: show, showId: showId),
+      for (final {
+      'cast_id': id as int,
+      'show_id': showId as int,
+      'name': name as String,
+      'image': image as String,
+      'character': character as String,
+      }
+      in castMaps)
+        CastModel(
+          id: id,
+          name: name,
+          image: image,
+          character: character,
+          showId: showId,
+        ),
     ];
   }
 }

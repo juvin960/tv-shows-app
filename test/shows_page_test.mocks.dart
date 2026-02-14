@@ -7,8 +7,8 @@ import 'dart:async' as _i6;
 import 'dart:ui' as _i7;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:tv_shows_appp/Features/data/model/cast_model.dart' as _i5;
-import 'package:tv_shows_appp/Features/data/model/show_model.dart' as _i4;
+import 'package:tv_shows_appp/Features/model/cast_model.dart' as _i5;
+import 'package:tv_shows_appp/Features/model/show_model.dart' as _i4;
 import 'package:tv_shows_appp/Features/data/repositories/show_repository.dart'
     as _i2;
 import 'package:tv_shows_appp/Features/presentation/view_model/show_view_model.dart'
@@ -43,7 +43,7 @@ class MockShowViewModel extends _i1.Mock implements _i3.ShowViewModel {
   }
 
   @override
-  _i2.ShowRepository get repository =>
+  _i2.ShowRepository get showRepository =>
       (super.noSuchMethod(
             Invocation.getter(#repository),
             returnValue: _FakeShowRepository_0(

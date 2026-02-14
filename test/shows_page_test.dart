@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
-import 'package:tv_shows_appp/Features/data/model/show_model.dart';
+import 'package:tv_shows_appp/Features/model/show_model.dart';
 import 'package:tv_shows_appp/Features/presentation/view/show_list_screen.dart';
 import 'package:tv_shows_appp/Features/presentation/view_model/show_view_model.dart';
 

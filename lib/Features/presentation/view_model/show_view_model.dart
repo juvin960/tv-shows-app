@@ -1,15 +1,20 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:tv_shows_appp/Features/data/model/show_model.dart';
+import 'package:tv_shows_appp/Features/model/show_model.dart';
 
-import '../../data/model/cast_model.dart';
+import '../../model/cast_model.dart';
+import '../../data/repositories/cast_repository.dart';
 import '../../data/repositories/show_repository.dart';
 
 class ShowViewModel extends ChangeNotifier {
-  final ShowRepository repository;
+  final ShowRepository showRepository;
+  final CastRepository castRepository;
 
-  ShowViewModel({required this.repository});
+// dependency injection
+  ShowViewModel( {required this.showRepository ,required this.castRepository});
+
+
 
   List<ShowModel> _shows = [];
   List<CastModel> _cast = [];
@@ -21,6 +26,7 @@ class ShowViewModel extends ChangeNotifier {
   int _currentPage = 0;
   Timer? _debounce;
 
+  // public getters
   List<ShowModel> get shows => _shows;
   List<CastModel> get cast => _cast;
   bool get isLoading => _isLoading;
@@ -28,22 +34,26 @@ class ShowViewModel extends ChangeNotifier {
   bool get hasMore => _hasMore;
   String? get errorMessage => _errorMessage;
 
+  // Initial load of TV shows (used on first screen load or refresh)
   Future<void> loadShows() async {
     try {
-      debugPrint('Page loading started');
-
+      // Set loading state to true so UI can show a loader
+      // Clear any previous error message
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();
 
+      // Reset pagination to the first page
       _currentPage = 0;
+
+      // Assume there are more pages available at the start
       _hasMore = true;
+      _shows = await showRepository.getShows(_currentPage);
 
-      _shows = await repository.getShows(_currentPage);
-
-      debugPrint(" Shows loaded: ${_shows.length}");
+      // Move to the next page for future pagination calls
       _currentPage++;
     } finally {
+
       _isLoading = false;
       notifyListeners();
     }
@@ -52,12 +62,12 @@ class ShowViewModel extends ChangeNotifier {
   Future<void> loadMore() async {
     if (!_hasMore || _isFetchingMore) return;
 
-    debugPrint('Loaded more');
+
     _isFetchingMore = true;
     notifyListeners();
 
     try {
-      final data = await repository.getShows(_currentPage);
+      final data = await showRepository.getShows(_currentPage);
 
       if (data.isEmpty) {
         _hasMore = false;
@@ -92,7 +102,7 @@ class ShowViewModel extends ChangeNotifier {
         notifyListeners();
 
         // Fetches shows from repository
-        _shows = await repository.searchShows(query);
+        _shows = await showRepository.searchShows(query);
         _hasMore = false;
 
         // If no results set a message
@@ -107,14 +117,14 @@ class ShowViewModel extends ChangeNotifier {
       }
     });
   }
-
+// Initially load cast
   Future<void> loadCast(int showId) async {
     try {
       _isLoading = true;
       _errorMessage = null;
       notifyListeners();
 
-      _cast = await repository.getCast(showId);
+      _cast = await castRepository.getCast(showId);
     } catch (e) {
       _cast = [];
     } finally {

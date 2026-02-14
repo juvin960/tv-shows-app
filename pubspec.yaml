@@ -42,6 +42,8 @@ dependencies:
   flutter_html: ^3.0.0
   sqflite: ^2.4.2
   path: ^1.9.1
+  fade_shimmer: ^2.4.0
+  internet_connection_checker_plus: ^2.9.1+2
 
 dev_dependencies:
   flutter_test:

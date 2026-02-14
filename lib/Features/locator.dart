@@ -5,6 +5,7 @@ import 'package:tv_shows_appp/Features/presentation/view_model/show_view_model.d
 
 import 'data/api_client.dart';
 import 'data/endpoints.dart';
+import 'data/repositories/cast_repository.dart';
 
 
 final sl = GetIt.instance;
@@ -18,7 +19,9 @@ void setupLocator() {
 
   // Register Repository
   sl.registerLazySingleton(() => ShowRepository(sl<ApiClient>()));
+  sl.registerLazySingleton(() => CastRepository(sl<ApiClient>()));
 
   // Register ViewModel
-  sl.registerFactory(() => ShowViewModel(repository: sl<ShowRepository>()));
+  sl.registerFactory(() => ShowViewModel(showRepository: sl<ShowRepository>(), castRepository:  sl<CastRepository>()));
+  
 }
